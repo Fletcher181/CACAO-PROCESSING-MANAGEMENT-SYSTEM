@@ -10,6 +10,9 @@ Route::get('/', function () {
 
 Route::resource('staffs', StaffsController::class);
 
+Route::put('/staffs/{id}/status', [StaffsController::class, 'updateStatus'])->name('staffs.updateStatus');
+
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');

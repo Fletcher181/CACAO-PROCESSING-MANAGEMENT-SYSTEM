@@ -13,7 +13,7 @@ class StaffsController extends Controller
      */
     public function index()
     {
-        $staffs = Staffs::paginate(10);
+        $staffs = Staffs::paginate(5);
         return view('staffs.index', [
             'staffs' => $staffs
         ]);
@@ -37,10 +37,15 @@ class StaffsController extends Controller
             'firstname' => 'required|string|max:255',
             'lastname'  => 'required|string|max:255',
             'role'      => 'required|string|max:255',
-            'contact' => 'required|digits:11',
-            'email'     => 'required|string|email|max:255|unique:staffs,staff_email',
-            'password'  => 'required|string|max:255',
-            'status'    => 'required|string|max:255',
+            'contact'   => ['required', 'digits:11'],
+            'email'     => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('staffs', 'staff_email'),
+            ],
+            'password'  => 'required|string|min:8|confirmed',
         ]);
     
         DB::transaction(function () use ($request) {
@@ -48,10 +53,10 @@ class StaffsController extends Controller
                 'staff_firstname' => $request->firstname,
                 'staff_lastname'  => $request->lastname,
                 'staff_role'      => $request->role,
-                'staff_email'     => $request->email,
                 'staff_contact'   => $request->contact,
+                'staff_email'     => $request->email,
+                'staff_status'    => 'Active',
                 'staff_password'  => bcrypt($request->password),
-                'staff_status'    => $request->status,
             ]);
         });
     
@@ -93,7 +98,6 @@ class StaffsController extends Controller
                 Rule::unique('staffs', 'staff_email')->ignore($staff->staff_id, 'staff_id'),
             ],
             'password'  => 'nullable|string|min:8|confirmed',
-            'status'    => 'required|string|max:255',
         ]);
 
         DB::transaction(function () use ($request, $staff) {
@@ -103,7 +107,6 @@ class StaffsController extends Controller
                 'staff_role'      => $request->role,
                 'staff_email'     => $request->email,
                 'staff_contact'   => $request->contact,
-                'staff_status'    => $request->status,
             ];
 
             if ($request->filled('password')) {
@@ -114,6 +117,15 @@ class StaffsController extends Controller
         });
 
         return redirect('/staffs')->with('success', 'Account Updated Successfully!');
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $staff = Staffs::findOrFail($id);
+        $staff->staff_status = $request->status;
+        $staff->save();
+
+        return redirect()->back()->with('success', 'Account status updated successfully.');
     }
 
     /**
