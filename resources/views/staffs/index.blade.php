@@ -1,4 +1,4 @@
-@extends('layouts.frontend')
+@extends('layouts.sidebar')
 
 @section('content')
 <div class="container">
@@ -25,10 +25,11 @@
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h4 class="mb-0 fs-3">ACCOUNTS LIST</h4>
+
                     <!-- Search Bar -->
-                    <form action="{{ route('staffs.index') }}" method="GET" class="mb-3 d-flex justify-content-end">
-                        <div class="input-group w-50">
-                            <input type="text" name="search" class="form-control" placeholder="Search accounts..."
+                    <form action="{{ route('staffs.index') }}" method="GET" class="d-flex align-items-center">
+                        <div class="input-group" style="width: 300px;">
+                            <input type="text" name="search" class="form-control" placeholder="Search..."
                                 value="{{ request('search') }}">
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-search"></i> {{-- Bootstrap search icon --}}
