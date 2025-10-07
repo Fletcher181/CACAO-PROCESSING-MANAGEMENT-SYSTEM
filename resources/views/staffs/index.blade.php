@@ -1,5 +1,5 @@
 @extends('layouts.sidebar')
-
+@extend('layouts.navigation')
 @section('content')
 <div class="container">
     <div class="row">
@@ -43,46 +43,43 @@
                     <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                             <div class="modal-header">
+                                
                                 <h5 class="modal-title" id="addAccountModalLabel">Add New Account</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
 
                             <form action="{{ route('staffs.store') }}" method="POST">
                                 @csrf
+                                <input type="hidden" name="create_staff_id">
                                 <div class="modal-body">
                                     <div class="mb-3">
                                         <label>First Name</label>
-                                        <input type="text" name="firstname" class="form-control"
-                                            value="{{ old('firstname') }}" required>
+                                        <input type="text" name="firstname" class="form-control" value="{{ old('firstname') }}" required>
                                         @error('firstname') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div class="mb-3">
                                         <label>Last Name</label>
-                                        <input type="text" name="lastname" class="form-control"
-                                            value="{{ old('lastname') }}" required>
+                                        <input type="text" name="lastname" class="form-control" value="{{ old('lastname') }}" required>
                                         @error('lastname') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div class="mb-3">
                                         <label>Role</label>
-                                        <input type="text" name="role" class="form-control"
-                                            value="{{ old('role') }}" required>
+                                        <input type="text" name="role" class="form-control" value="{{ old('role') }}" required>
                                         @error('role') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div class="mb-3">
                                         <label>Contact Number</label>
-                                        <input type="text" name="contact" class="form-control"
-                                            value="{{ old('contact') }}" maxlength="11" pattern="\d{11}"
-                                            title="Please enter exactly 11 digits" required>
+                                        <input type="text" name="contact" class="form-control" maxlength="11" pattern="\d{11}"
+                                            title="Please enter exactly 11 digits" value="{{ old('contact') }}" required>
                                         @error('contact') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
 
                                     <div class="mb-3">
                                         <label>Email</label>
-                                        <input type="email" name="email" class="form-control"
-                                            value="{{ old('email') }}" required>
+                                        <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
                                         @error('email') <span class="text-danger">{{ $message }}</span> @enderror
                                     </div>
 
@@ -205,68 +202,106 @@
 
                             <!-- Edit Modal -->
                             <div class="modal fade" id="editModal{{ $staff->staff_id }}" tabindex="-1"
-                                aria-labelledby="editModalLabel{{ $staff->staff_id }}" aria-hidden="true">
-                                <div class="modal-dialog modal-lg">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <h5 class="modal-title" id="editModalLabel{{ $staff->staff_id }}">Edit Account</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
+    aria-labelledby="editModalLabel{{ $staff->staff_id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel{{ $staff->staff_id }}">Edit Account</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
 
-                                        <form action="{{ route('staffs.update', $staff->staff_id) }}" method="POST">
-                                            @csrf
-                                            @method('PUT')
-                                            <div class="modal-body">
-                                                <div class="mb-3">
-                                                    <label>Firstname</label>
-                                                    <input type="text" name="firstname" class="form-control"
-                                                        value="{{ old('firstname', $staff->staff_firstname) }}" required>
-                                                </div>
+            <form action="{{ route('staffs.update', $staff->staff_id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <input type="hidden" name="edit_staff_id" value="{{ $staff->staff_id }}">
+                <div class="modal-body">
 
-                                                <div class="mb-3">
-                                                    <label>Lastname</label>
-                                                    <input type="text" name="lastname" class="form-control"
-                                                        value="{{ old('lastname', $staff->staff_lastname) }}" required>
-                                                </div>
+                    <div class="mb-3">
+                        <label>Firstname</label>
+                        <input type="text" name="update_firstname"
+                            class="form-control @error('update_firstname') {{ old('edit_staff_id') == $staff->staff_id ? 'is-invalid' : '' }} @enderror"
+                            value="{{ $staff->staff_firstname }}" required>
+                        @error('update_firstname')
+                            @if (old('edit_staff_id') == $staff->staff_id)
+                                <span class="text-danger">{{ $message }}</span>
+                            @endif
+                        @enderror
+                    </div>
 
-                                                <div class="mb-3">
-                                                    <label>Role</label>
-                                                    <input type="text" name="role" class="form-control"
-                                                        value="{{ old('role', $staff->staff_role) }}" required>
-                                                </div>
+                    <div class="mb-3">
+                        <label>Lastname</label>
+                        <input type="text" name="update_lastname"
+                            class="form-control @error('update_lastname') {{ old('edit_staff_id') == $staff->staff_id ? 'is-invalid' : '' }} @enderror"
+                            value="{{ $staff->staff_lastname }}" required>
+                        @error('update_lastname')
+                            @if (old('edit_staff_id') == $staff->staff_id)
+                                <span class="text-danger">{{ $message }}</span>
+                            @endif
+                        @enderror
+                    </div>
 
-                                                <div class="mb-3">
-                                                    <label>Contact</label>
-                                                    <input type="text" name="contact" class="form-control"
-                                                        value="{{ old('contact', $staff->staff_contact) }}" maxlength="11"
-                                                        pattern="\d{11}" title="Please enter exactly 11 digits" required>
-                                                </div>
+                    <div class="mb-3">
+                        <label>Role</label>
+                        <input type="text" name="update_role"
+                            class="form-control @error('update_role') {{ old('edit_staff_id') == $staff->staff_id ? 'is-invalid' : '' }} @enderror"
+                            value="{{ $staff->staff_role }}" required>
+                        @error('update_role')
+                            @if (old('edit_staff_id') == $staff->staff_id)
+                                <span class="text-danger">{{ $message }}</span>
+                            @endif
+                        @enderror
+                    </div>
 
-                                                <div class="mb-3">
-                                                    <label>Email</label>
-                                                    <input type="email" name="email" class="form-control"
-                                                        value="{{ old('email', $staff->staff_email) }}" required>
-                                                </div>
+                    <div class="mb-3">
+                        <label>Contact</label>
+                        <input type="text" name="update_contact"
+                            class="form-control @error('update_contact') {{ old('edit_staff_id') == $staff->staff_id ? 'is-invalid' : '' }} @enderror"
+                            value="{{ $staff->staff_contact }}" maxlength="11"
+                            pattern="\d{11}" title="Please enter exactly 11 digits" required>
+                        @error('update_contact')
+                            @if (old('edit_staff_id') == $staff->staff_id)
+                                <span class="text-danger">{{ $message }}</span>
+                            @endif
+                        @enderror
+                    </div>
 
-                                                <div class="mb-3">
-                                                    <label>New Password (optional)</label>
-                                                    <input type="password" name="password" class="form-control">
-                                                </div>
+                    <div class="mb-3">
+                        <label>Email</label>
+                        <input type="email" name="update_email"
+                            class="form-control @error('update_email') {{ old('edit_staff_id') == $staff->staff_id ? 'is-invalid' : '' }} @enderror"
+                            value="{{ $staff->staff_email }}" required>
+                        @error('update_email')
+                            @if (old('edit_staff_id') == $staff->staff_id)
+                                <span class="text-danger">{{ $message }}</span>
+                            @endif
+                        @enderror
+                    </div>
 
-                                                <div class="mb-3">
-                                                    <label>Confirm New Password</label>
-                                                    <input type="password" name="password_confirmation" class="form-control">
-                                                </div>
-                                            </div>
+                    <div class="mb-3">
+                        <label>New Password (optional)</label>
+                        <input type="password" name="update_password"
+                            class="form-control @error('update_password') {{ old('edit_staff_id') == $staff->staff_id ? 'is-invalid' : '' }} @enderror">
+                        @error('update_password')
+                            @if (old('edit_staff_id') == $staff->staff_id)
+                                <span class="text-danger">{{ $message }}</span>
+                            @endif
+                        @enderror
+                    </div>
 
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                                <button type="submit" class="btn btn-warning">Save</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="mb-3">
+                        <label>Confirm New Password</label>
+                        <input type="password" name="update_password_confirmation" class="form-control">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
                             <!-- Confirm Activate/Deactivate Modal -->
                             <div class="modal fade" id="confirmStatusModal" tabindex="-1" aria-labelledby="confirmStatusLabel" aria-hidden="true">
@@ -304,8 +339,51 @@
 @endsection
 
 @section('scripts')
+    {{-- Reset Form Function --}}
+    <script>
+        function resetForm(modalId) {
+            const modal = document.getElementById(modalId);
+            const form = modal.querySelector('form');
+            if (form) {
+                form.reset();
+                // Remove validation error messages
+                const errorMessages = form.querySelectorAll('.text-danger');
+                errorMessages.forEach(error => error.remove());
+                // Remove invalid classes
+                const invalidInputs = form.querySelectorAll('.is-invalid');
+                invalidInputs.forEach(input => input.classList.remove('is-invalid'));
+            }
+        }
+
+        // Also reset form when modal is completely hidden
+        document.addEventListener('DOMContentLoaded', function() {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                modal.addEventListener('hidden.bs.modal', function() {
+                    const form = this.querySelector('form');
+                    if (form) {
+                        form.reset();
+                        // Remove validation error messages
+                        const errorMessages = form.querySelectorAll('.text-danger');
+                        errorMessages.forEach(error => error.remove());
+                        // Remove invalid classes
+                        const invalidInputs = form.querySelectorAll('.is-invalid');
+                        invalidInputs.forEach(input => input.classList.remove('is-invalid'));
+                    }
+                });
+            });
+        });
+    </script>
+
     {{-- Reopen Add Account Modal if validation fails --}}
-    @if ($errors->any())
+    @if ($errors->any() && old('edit_staff_id'))
+        <script>
+            window.addEventListener('load', () => {
+                const modal = new bootstrap.Modal(document.getElementById('editModal{{ old('edit_staff_id') }}'));
+                modal.show();
+            });
+        </script>
+    @elseif ($errors->any())
         <script>
             window.addEventListener('load', () => {
                 const modal = new bootstrap.Modal(document.getElementById('addAccountModal'));
@@ -361,4 +439,33 @@
             }
         }, 2000);
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        // Select all edit modals by their id pattern
+        document.querySelectorAll('[id^="editModal"]').forEach(function(modalEl) {
+            modalEl.addEventListener('hidden.bs.modal', function() {
+                window.location.href = "{{ route('staffs.index') }}";
+            });
+        });
+    });
+    </script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Redirect to staffs.index when the create modal is closed
+        const addModal = document.getElementById('addAccountModal');
+        if (addModal) {
+            addModal.addEventListener('hidden.bs.modal', function() {
+                window.location.href = "{{ route('staffs.index') }}";
+            });
+        }
+
+        // Existing code for edit modals
+        document.querySelectorAll('[id^="editModal"]').forEach(function(modalEl) {
+            modalEl.addEventListener('hidden.bs.modal', function() {
+                window.location.href = "{{ route('staffs.index') }}";
+            });
+        });
+    });
+</script>
 @endsection

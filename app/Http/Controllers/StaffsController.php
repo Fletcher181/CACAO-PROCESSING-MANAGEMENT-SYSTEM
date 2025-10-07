@@ -160,31 +160,31 @@ class StaffsController extends Controller
     public function update(Request $request, Staffs $staff)
     {
         $request->validate([
-            'firstname' => 'required|string|max:255',
-            'lastname'  => 'required|string|max:255',
-            'role'      => 'required|string|max:255',
-            'contact' => 'required|digits:11',
-            'email'     => [
+            'update_firstname' => 'required|string|max:255',
+            'update_lastname'  => 'required|string|max:255',
+            'update_role'      => 'required|string|max:255',
+            'update_contact'   => 'required|digits:11',
+            'update_email'     => [
                 'required',
                 'string',
                 'email',
                 'max:255',
                 Rule::unique('staffs', 'staff_email')->ignore($staff->staff_id, 'staff_id'),
             ],
-            'password'  => 'nullable|string|min:8|confirmed',
+            'update_password'  => 'nullable|string|min:8|confirmed',
         ]);
 
         DB::transaction(function () use ($request, $staff) {
             $data = [
-                'staff_firstname' => $request->firstname,
-                'staff_lastname'  => $request->lastname,
-                'staff_role'      => $request->role,
-                'staff_email'     => $request->email,
-                'staff_contact'   => $request->contact,
+                'staff_firstname' => $request->update_firstname,
+                'staff_lastname'  => $request->update_lastname,
+                'staff_role'      => $request->update_role,
+                'staff_email'     => $request->update_email,
+                'staff_contact'   => $request->update_contact,
             ];
 
-            if ($request->filled('password')) {
-                $data['staff_password'] = bcrypt($request->password);
+            if ($request->filled('update_password')) {
+                $data['staff_password'] = bcrypt($request->update_password);
             }
 
             $staff->update($data);
